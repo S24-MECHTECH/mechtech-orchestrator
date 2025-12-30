@@ -1,0 +1,41 @@
+{
+  "task_id": "FIX_RENAME_FILE_NODE",
+  "priority": "URGENT",
+  "workflow_id": "zD5zabWag8LR7rna",
+  "workflow_name": "***MECHTECH_DOKUMETEN_ROUTER_V3_FIXED",
+  "target_node": {
+    "name": "Rename File",
+    "id": "abc61b5a-3116-425f-b67a-8d9514e4a51e",
+    "type": "n8n-nodes-base.googleDriveTool",
+    "position": [8304, 8112]
+  },
+  "problem": "Die 'options' sind leer - kein Name-Parameter definiert. Die KI kann Dateien nicht umbenennen.",
+  "current_state": {
+    "operation": "update",
+    "fileId": "={{ $fromAI('fileId', 'Die Google Drive File ID', 'string') }}",
+    "options": {}
+  },
+  "required_fix": {
+    "operation": "update",
+    "fileId": "={{ $fromAI('fileId', 'Die Google Drive File ID der umzubenennenden Datei', 'string') }}",
+    "options": {
+      "name": "={{ $fromAI('newFileName', 'Neuer Dateiname im Format: YYYY-MM-DD_FirmaKurz_Dokumenttyp_Betrag.pdf', 'string') }}"
+    }
+  },
+  "additional_requirements": [
+    "Firmennamen soll als Kurzform im Dateinamen erscheinen",
+    "Gutschriften korrekt kategorisieren (AUSGANGS_RECHNUNGEN oder neuer Ordner)",
+    "Ordnerstruktur synchronisieren mit aktueller Google Drive Struktur"
+  ],
+  "instructions_for_cursor": [
+    "1. Öffne n8n UI: https://n8n.srv1091615.hstgr.cloud/workflow/zD5zabWag8LR7rna",
+    "2. Klicke auf 'AI Agent' Node",
+    "3. Finde 'Rename File' in den Tools (unter dem Agent)",
+    "4. Öffne die Node-Konfiguration",
+    "5. Unter 'Options' -> 'Add Option' -> 'Name' hinzufügen",
+    "6. Expression einfügen: ={{ $fromAI('newFileName', 'Neuer Dateiname: YYYY-MM-DD_FirmaKurz_Typ_Betrag.pdf', 'string') }}",
+    "7. Speichern und testen"
+  ],
+  "created_at": "2025-12-30T03:30:00Z",
+  "created_by": "Claude"
+}
