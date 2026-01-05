@@ -1,0 +1,83 @@
+{
+  "complete_nodes_to_add": [
+    {
+      "parameters": {
+        "operation": "decompress",
+        "binaryPropertyName": "data"
+      },
+      "id": "zip-decompress-001",
+      "name": "Decompress ZIP",
+      "type": "n8n-nodes-base.compression",
+      "position": [1856, 816],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "zip-loop-001",
+      "name": "Loop Over Extracted Files",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [2080, 816],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {"version": 2, "caseSensitive": true, "typeValidation": "strict"},
+                "combinator": "and",
+                "conditions": [{"id": "pdf", "operator": {"type": "string", "operation": "equals"}, "leftValue": "={{ Object.keys($binary)[0] ? $binary[Object.keys($binary)[0]].mimeType : '' }}", "rightValue": "application/pdf"}]
+              },
+              "renameOutput": true,
+              "outputKey": "pdf"
+            },
+            {
+              "conditions": {
+                "options": {"version": 2, "caseSensitive": true, "typeValidation": "strict"},
+                "combinator": "and",
+                "conditions": [{"id": "csv", "operator": {"type": "string", "operation": "equals"}, "leftValue": "={{ Object.keys($binary)[0] ? $binary[Object.keys($binary)[0]].mimeType : '' }}", "rightValue": "text/csv"}]
+              },
+              "renameOutput": true,
+              "outputKey": "csv"
+            },
+            {
+              "conditions": {
+                "options": {"version": 2, "caseSensitive": true, "typeValidation": "strict"},
+                "combinator": "or",
+                "conditions": [
+                  {"id": "txt1", "operator": {"type": "string", "operation": "contains"}, "leftValue": "={{ Object.keys($binary)[0] ? $binary[Object.keys($binary)[0]].mimeType : '' }}", "rightValue": "text/plain"},
+                  {"id": "txt2", "operator": {"type": "string", "operation": "endsWith"}, "leftValue": "={{ Object.keys($binary)[0] ? $binary[Object.keys($binary)[0]].fileName : '' }}", "rightValue": ".txt"}
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "zip-route-001",
+      "name": "Route Extracted File",
+      "type": "n8n-nodes-base.switch",
+      "position": [2304, 816],
+      "typeVersion": 3.2
+    }
+  ],
+  "updated_filetype_zip_rule": {
+    "conditions": {
+      "options": {"version": 2, "caseSensitive": true, "typeValidation": "strict"},
+      "combinator": "or",
+      "conditions": [
+        {"id": "zip1", "operator": {"type": "string", "operation": "contains"}, "leftValue": "={{ $binary.data.mimeType }}", "rightValue": "zip"},
+        {"id": "zip2", "operator": {"type": "string", "operation": "equals"}, "leftValue": "={{ $binary.data.mimeType }}", "rightValue": "application/x-zip-compressed"},
+        {"id": "zip3", "operator": {"type": "string", "operation": "endsWith"}, "leftValue": "={{ $binary.data.fileName || '' }}", "rightValue": ".zip"}
+      ]
+    },
+    "renameOutput": true,
+    "outputKey": "zip"
+  }
+}

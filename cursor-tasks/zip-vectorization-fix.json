@@ -1,0 +1,61 @@
+{
+  "task_id": "ZIP_VECTORIZATION_FIX_001",
+  "priority": "URGENT",
+  "status": "READY_TO_EXECUTE",
+  "created": "2026-01-05T04:30:00Z",
+  "workflow": {
+    "id": "Wh6EoSl8lQCqbajd",
+    "name": "***MECHTECH_BASIS_RAG_LEXWARE",
+    "url": "https://n8n.srv1091615.hstgr.cloud/workflow/Wh6EoSl8lQCqbajd"
+  },
+  "problem": "ZIP files in Google Drive folder not being vectorized to Supabase",
+  "solution": "Add ZIP detection, decompression, and file routing to existing workflow",
+  "execution_steps": [
+    {
+      "step": 1,
+      "action": "Open workflow in n8n UI",
+      "url": "https://n8n.srv1091615.hstgr.cloud/workflow/Wh6EoSl8lQCqbajd"
+    },
+    {
+      "step": 2,
+      "action": "Edit FileType node - Add 6th output for ZIP",
+      "details": "Add condition: mimeType contains 'zip' OR fileName ends with '.zip'"
+    },
+    {
+      "step": 3,
+      "action": "Add Compression node named 'Decompress ZIP'",
+      "position": [1856, 816],
+      "settings": {"operation": "decompress", "binaryPropertyName": "data"}
+    },
+    {
+      "step": 4,
+      "action": "Add Split In Batches node named 'Loop Over Extracted Files'",
+      "position": [2080, 816],
+      "settings": {"batchSize": 1}
+    },
+    {
+      "step": 5,
+      "action": "Add Switch node named 'Route Extracted File'",
+      "position": [2304, 816],
+      "outputs": ["pdf", "csv", "text"]
+    },
+    {
+      "step": 6,
+      "action": "Connect nodes: FileType[zip] -> Decompress -> Loop -> Route"
+    },
+    {
+      "step": 7,
+      "action": "Connect Route outputs to existing processors",
+      "connections": {
+        "pdf": "Extract from PDF",
+        "csv": "Extract from CSV",
+        "text": "Default Data Loader_01"
+      }
+    },
+    {
+      "step": 8,
+      "action": "Test with ZIP file from Google Drive folder",
+      "folder_id": "1e8ue-S-EEN_cYX7l0sD4HPe72ABMvzKM"
+    }
+  ]
+}
