@@ -1,8 +1,73 @@
 {
   "tasks": [
     {
-      "id": "workflow-update-001",
+      "id": "mcp-lexware-tools-001",
       "priority": "CRITICAL",
+      "status": "PENDING",
+      "type": "mcp-server-extension",
+      "target": "mechtech-basis",
+      "description": "Add Lexware Vector & Storage tools to MCP server for Buchhaltungs-KI",
+      "context": {
+        "supabase_functions_deployed": [
+          "search_lexware_vectors(query_embedding, source_filter, match_threshold, match_count)",
+          "list_lexware_sources()",
+          "insert_lexware_vector(content, embedding, source, metadata, ...)",
+          "delete_lexware_vectors_by_source(source_pattern)"
+        ],
+        "source_registry_table": "lexware_source_registry",
+        "vector_table": "Lexware_Buchhaltung",
+        "storage_bucket": "lexware-imports",
+        "registered_sources": [
+          "blob - Legacy vectors",
+          "bucket:lexware-imports - ZIP files from Supabase Storage",
+          "gdrive:MECHTECH-FIRMEN-DATENBANK - Files from Google Drive",
+          "mcp:buchhaltung-ki - Direct inserts from Claude"
+        ]
+      },
+      "new_tools": [
+        {
+          "name": "lexware_vector_search",
+          "description": "Search Lexware vectors with optional source isolation",
+          "parameters": {
+            "query": "string - Search query text",
+            "source_filter": "string (optional) - Filter by source prefix",
+            "limit": "number (optional) - Max results, default 10"
+          },
+          "implementation": "Call search_lexware_vectors() via Postgres, needs embedding generation"
+        },
+        {
+          "name": "lexware_list_sources",
+          "description": "List all registered vector sources with stats",
+          "parameters": {},
+          "implementation": "SELECT * FROM list_lexware_sources()"
+        },
+        {
+          "name": "lexware_storage_list",
+          "description": "List files in lexware-imports bucket",
+          "parameters": {},
+          "implementation": "SELECT name, metadata FROM storage.objects WHERE bucket_id = 'lexware-imports'"
+        },
+        {
+          "name": "lexware_storage_extract_zip",
+          "description": "Extract ZIP from bucket and return file list",
+          "parameters": {
+            "filename": "string - ZIP filename in bucket"
+          },
+          "implementation": "Download from Supabase Storage, extract, return file metadata"
+        }
+      ],
+      "integration_notes": [
+        "Embeddings: Use OpenAI text-embedding-3-small (1536 dimensions)",
+        "Source format: 'bucket:lexware-imports/filename.zip/internal_path.pdf'",
+        "Buchhaltungs-KI prompt already exists - don't modify, just add tools",
+        "Two input paths: 1) Supabase bucket, 2) Google Drive folder"
+      ],
+      "created_at": "2026-01-05T05:50:00Z",
+      "created_by": "claude-orchestrator"
+    },
+    {
+      "id": "workflow-update-001",
+      "priority": "HIGH",
       "status": "PENDING",
       "type": "n8n-workflow-update",
       "target": "zD5zabWag8LR7rna",
@@ -16,26 +81,16 @@
           "path": "parameters.text",
           "find": "{{ $json.pdf_text }}",
           "replace": "{{ $json.text }}"
-        },
-        {
-          "node_id": "f5cb7cdb-11f0-4cf9-b149-99ea98e46328",
-          "node_name": "Postgres Chat Memory",
-          "action": "replace",
-          "path": "parameters.sessionKey",
-          "find": "posgres_document_router",
-          "replace": "postgres_document_router"
-        },
-        {
-          "node_id": "0b0aef28-e475-4ee0-9d19-6189d7e0da05",
-          "node_name": "Google Sheets BUCHHALTUNG_ERFASSUNG",
-          "action": "update",
-          "path": "parameters.sheetName.__rl.value",
-          "value": "Lexware_Erfassung"
         }
       ],
       "created_at": "2026-01-05T02:25:00Z",
       "created_by": "claude-orchestrator"
     }
   ],
-  "last_updated": "2026-01-05T02:25:00Z"
+  "last_updated": "2026-01-05T05:50:00Z",
+  "claude_status": {
+    "supabase_ready": true,
+    "functions_deployed": true,
+    "awaiting_cursor": "mcp-lexware-tools-001"
+  }
 }
