@@ -1,0 +1,9 @@
+{
+  "status": "TASK_ASSIGNED",
+  "current_task": "workflow-update-001",
+  "message": "CRITICAL: Update MECHTECH_TRANSACTION_EXTRACTOR workflow via n8n API",
+  "github_issue": 7,
+  "n8n_api_endpoint": "https://n8n.srv1091615.hstgr.cloud/api/v1/workflows/zD5zabWag8LR7rna",
+  "timestamp": "2026-01-05T02:25:00Z",
+  "instructions": "USE n8n REST API to PATCH workflow. API key in .env. AUTONOM AUSFÜHREN!"
+}

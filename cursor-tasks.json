@@ -1,0 +1,41 @@
+{
+  "tasks": [
+    {
+      "id": "workflow-update-001",
+      "priority": "CRITICAL",
+      "status": "PENDING",
+      "type": "n8n-workflow-update",
+      "target": "zD5zabWag8LR7rna",
+      "description": "Fix MECHTECH_TRANSACTION_EXTRACTOR for multi-transaction extraction",
+      "github_issue": 7,
+      "fixes": [
+        {
+          "node_id": "a7dadf05-c413-4005-bb8e-6588deadb2de",
+          "node_name": "AI Agent",
+          "action": "replace",
+          "path": "parameters.text",
+          "find": "{{ $json.pdf_text }}",
+          "replace": "{{ $json.text }}"
+        },
+        {
+          "node_id": "f5cb7cdb-11f0-4cf9-b149-99ea98e46328",
+          "node_name": "Postgres Chat Memory",
+          "action": "replace",
+          "path": "parameters.sessionKey",
+          "find": "posgres_document_router",
+          "replace": "postgres_document_router"
+        },
+        {
+          "node_id": "0b0aef28-e475-4ee0-9d19-6189d7e0da05",
+          "node_name": "Google Sheets BUCHHALTUNG_ERFASSUNG",
+          "action": "update",
+          "path": "parameters.sheetName.__rl.value",
+          "value": "Lexware_Erfassung"
+        }
+      ],
+      "created_at": "2026-01-05T02:25:00Z",
+      "created_by": "claude-orchestrator"
+    }
+  ],
+  "last_updated": "2026-01-05T02:25:00Z"
+}
